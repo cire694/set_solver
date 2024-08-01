@@ -7,9 +7,22 @@ from keras_preprocessing.image import load_img
 from PIL import Image
 
 from detect_color import detect_color
+from find_sets import set_field, card
 
 # redo 2313, 2311, 2322, 2332 (25), 3113 (22), 3133(25), 3211 (THE ENTIRE FOLDER :SKULL:), 3221, 3222, 3311
 # remember to chainge from most compatible images
+
+color_index = {
+    (255, 0, 0), 
+    (0, 0, 255),
+    (255, 0, 255)
+}
+
+def enlarge_box(box, scale=1.1):
+    center = np.mean(box, axis=0)
+    new_box = (box - center) * scale + center
+    return np.intp(new_box)
+
 def find_cards(path):
     img = cv.imread(path)
 
@@ -53,7 +66,7 @@ def find_cards(path):
     )
 
     
-
+    cards = []
     for rect, box in filtered_box:
         width = int(rect[1][0])
         height = int(rect[1][1])
@@ -75,13 +88,40 @@ def find_cards(path):
 
         pred = predict(warped)
         
+        cards.append(card(*pred[0], box))
+        
         label = pred[2]
 
         cv.putText(filtered_contour_img, label, (int(rect[0][0]), int(rect[0][1])), cv.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 0), 3, cv.LINE_AA)
+    
+    sets = set_field(*cards)
+    print(sets)
+
+
+    color_iter = iter(color_index)
+    box_scale = 0.1
+
+    for set in sets.sets:
+        color = next(color_iter, (0, 0, 0))
+        for c in set: 
+            enlarged_box = enlarge_box(c.get_contour(), scale = 1 + box_scale)
+            filtered_contour_img = cv.drawContours(
+                image = filtered_contour_img,
+                contours = [enlarged_box], 
+                contourIdx=-1, 
+                color=color,
+                thickness=10,
+                lineType=cv.LINE_AA
+            )
+        box_scale += 0.1
 
     cv.imshow("filtered_contour_img", filtered_contour_img)
     cv.waitKey(0)
     cv.destroyAllWindows()
+
+
+
+    
     
 
 
@@ -184,4 +224,7 @@ def predict(img):
     return [color[0], number[0], symbol[0], shading[0]], [color[1] + 1, number[1] + 1, symbol[1] + 1, shading[1] + 1], card_string
 
 
-find_cards('../misc/set3.jpg')
+
+
+find_cards('../misc/set4.jpg')
+
