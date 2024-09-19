@@ -40,8 +40,8 @@ class card:
 class set_field: 
     def __init__(self, *cards):
         self.cards = cards
-        if len(cards) < 3:
-            raise ValueError('Not enough cards')
+        # if len(cards) < 3:
+        #     raise ValueError('Not enough cards')
 
         self.sets = []
         self.find_all_sets()

@@ -23,12 +23,15 @@ def enlarge_box(box, scale=1.1):
     new_box = (box - center) * scale + center
     return np.intp(new_box)
 
-def find_cards(path):
-    img = cv.imread(path)
+def find_sets(img):
 
-    if img is None: 
-        print(f"Unable to open image at {path}")
+    if isinstance(img, str):
+        img = cv.imread(img)
+
+    if img is None:
+        print(f"Error: Could not open image.")
         return 
+    
     
     gray_img, gray_img_contours = gray_img_convert(img)
     
@@ -71,7 +74,7 @@ def find_cards(path):
         width = int(rect[1][0])
         height = int(rect[1][1])
 
-
+        print("checkpoint")
         dst_pts = np.array([
             [0, height - 1],
             [0, 0],
@@ -115,10 +118,11 @@ def find_cards(path):
             )
         box_scale += 0.1
 
-    cv.imshow("filtered_contour_img", filtered_contour_img)
-    cv.waitKey(0)
-    cv.destroyAllWindows()
+    # cv.imshow("filtered_contour_img", filtered_contour_img)
+    # cv.waitKey(0)
+    # cv.destroyAllWindows()
 
+    return filtered_contour_img
 
 
     
@@ -226,5 +230,7 @@ def predict(img):
 
 
 
-find_cards('../misc/set4.jpg')
+cv.imshow("sets:", find_sets(cv.imread('../misc/set13.png')))
+cv.waitKey(0)
+cv.destroyAllWindows()
 
