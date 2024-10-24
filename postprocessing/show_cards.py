@@ -182,4 +182,4 @@ def predict(img):
     return [color[0], number[0], symbol[0], shading[0]], [color[1] + 1, number[1] + 1, symbol[1] + 1, shading[1] + 1], card_string
 
 
-find_cards('../misc/set14.jpg')
+find_cards('../misc/set7.jpg')

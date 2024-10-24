@@ -230,7 +230,7 @@ def predict(img):
 
 
 
-cv.imshow("sets:", find_sets(cv.imread('../misc/set13.png')))
+cv.imshow("sets:", find_sets(cv.imread('../misc/set4.jpg')))
 cv.waitKey(0)
 cv.destroyAllWindows()
 
